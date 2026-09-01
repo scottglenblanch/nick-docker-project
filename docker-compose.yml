@@ -10,6 +10,16 @@ services:
     environment:
       - SEARXNG_BASE_URL=http://localhost:8080/
       - SEARXNG_ENABLE_JSON=true
+      - SEARXNG_SECRET_KEY=${SEARXNG_SECRET_KEY:?Set SEARXNG_SECRET_KEY in .env}
+      - __SEARXNG_CONFIG_PATH=/tmp/searxng-config
+    entrypoint:
+      - /bin/sh
+      - -lc
+      - |
+        mkdir -p /tmp/searxng-config
+        cp /etc/searxng/settings.yml /tmp/searxng-config/settings.yml
+        sed -i "s|CHANGE_ME_LOCAL_SECRET|$SEARXNG_SECRET_KEY|g" /tmp/searxng-config/settings.yml
+        exec /usr/local/searxng/entrypoint.sh
     healthcheck:
       test:
         [

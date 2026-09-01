@@ -4,7 +4,7 @@
 use_default_settings: true
 
 server:
-  secret_key: "JA1wkg7oWP1bwZMaqGEtQhHvyqfQAob"
+  secret_key: "CHANGE_ME_LOCAL_SECRET"
   limiter: false
   image_proxy: true
 
