@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"terminal.integrated.env.windows": {
+			"PATH": "${workspaceFolder}\\.venv\\Scripts;${env:PATH}"
+		}
+	}
+}

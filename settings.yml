@@ -1,0 +1,31 @@
+use_default_settings: true
+
+general:
+  debug: false
+  instance_name: "SearXNG"
+
+server:
+  secret_key: "c863442d6ec7a17252c3e8ea3665504e40c9407f7d49f97e9d8e6ed4ac87a6d0"
+  limiter: false
+  image_proxy: true
+
+ui:
+  default_theme: simple
+  default_locale: en
+
+search:
+  formats:
+    - html
+    - json
+
+doi_resolvers:
+  oadoi.org: "https://oadoi.org/"
+  doi.org: "https://doi.org/"
+
+default_doi_resolver: oadoi.org
+
+outputs:
+  - name: html
+    template: simple.html
+  - name: json
+    template: json.html

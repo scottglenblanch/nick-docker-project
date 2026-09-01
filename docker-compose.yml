@@ -1,0 +1,66 @@
+services:
+  searxng:
+    image: searxng/searxng:latest
+    container_name: searxng
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./searxng-config:/etc/searxng:rw
+    environment:
+      - SEARXNG_BASE_URL=http://localhost:8080/
+      - SEARXNG_ENABLE_JSON=true
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "wget --quiet --tries=1 --spider http://localhost:8080/ || exit 1",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - llm-network
+
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:v0.11.3-ollama
+    container_name: open-webui
+    restart: unless-stopped
+    ports:
+      - "3001:8080"
+    environment:
+      # Enable web search
+      - ENABLE_WEB_SEARCH=true
+      - WEB_SEARCH_ENGINE=searxng
+      # Internal URL to SearXNG (within Docker network)
+      - SEARXNG_QUERY_URL=http://searxng:8080/search
+      # Optional tuning
+      - WEB_SEARCH_RESULT_COUNT=5
+      - WEB_SEARCH_CONCURRENT_REQUESTS=5
+      # Ollama connection (host machine)
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434
+      - HOST_DOCKER_INTERNAL=true
+      # If you want to trust proxy headers (optional)
+      - WEB_SEARCH_TRUST_ENV=true
+      # Improve reliability with local models that may not call native tools consistently
+      - DEFAULT_MODEL_PARAMS={"function_calling":"legacy"}
+      # Enable web search by default in the chat interface
+      - DEFAULT_INTERFACE_SETTINGS={"webSearch":true}
+    volumes:
+      - open-webui-data:/app/backend/data
+      - ./open-webui-overrides/middleware.py:/app/backend/open_webui/utils/middleware.py:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      searxng:
+        condition: service_healthy
+    networks:
+      - llm-network
+
+networks:
+  llm-network:
+    driver: bridge
+
+volumes:
+  open-webui-data:
