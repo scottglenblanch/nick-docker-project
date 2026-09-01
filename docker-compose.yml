@@ -60,6 +60,10 @@ services:
     volumes:
       - open-webui-data:/app/backend/data
       - ./open-webui-overrides/middleware.py:/app/backend/open_webui/utils/middleware.py:ro
+      - ./open-webui-overrides/middleware_helpers.py:/app/backend/open_webui/utils/middleware_helpers.py:ro
+      - ./open-webui-overrides/middleware_runtime.py:/app/backend/open_webui/utils/middleware_runtime.py:ro
+      - ./open-webui-overrides/middleware_pipeline.py:/app/backend/open_webui/utils/middleware_pipeline.py:ro
+      - ./open-webui-overrides/middleware_streaming.py:/app/backend/open_webui/utils/middleware_streaming.py:ro
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:
